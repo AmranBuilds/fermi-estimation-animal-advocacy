@@ -1,33 +1,33 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 
-st.set_page_config(page_title="Animal Advocacy EV Calculator")
-st.title("Expected Value in Animal Advocacy")
+st.set_page_config(page_title="Fermi Estimation: Animal Advocacy Impact", layout="wide")
 
-# Sidebar for variables
-st.sidebar.header("Campaign Parameters")
-impact = st.sidebar.slider("Impact (Animals helped if successful)", 0, 10000, 5000)
-probability = st.sidebar.slider("Probability of Success (%)", 0, 100, 20) / 100
+st.sidebar.header("Estimation Variables")
+human_population = st.sidebar.number_input("Human Population", min_value=100000, max_value=1000000000, value=10000000, step=1000000)
+meat_consumption_per_capita = st.sidebar.slider("Meat Consumption (kg/person/year)", min_value=10, max_value=150, value=50, step=5)
+yield_per_animal = st.sidebar.slider("Yield per Animal (kg)", min_value=1.0, max_value=500.0, value=2.5, step=0.5)
 
-# Calculate EV
-ev = impact * probability
+animals_impacted = (human_population * meat_consumption_per_capita) / yield_per_animal
 
-# Display Equations
+st.title("Fermi Estimation: Animal Advocacy Impact")
+
 st.header("The Math")
-st.latex(r"EV = P(\text{success}) \times \text{Impact}")
-st.latex(rf"EV = {probability} \times {impact} = {ev:,.0f} \text{{ animals}}")
+st.latex(r"N = \frac{P \times C}{Y}")
+st.markdown(r"""
+* $N$ = Total Animals Impacted
+* $P$ = Human Population
+* $C$ = Meat Consumption per Capita (kg/year)
+* $Y$ = Yield per Animal (kg)
+""")
 
-# Visual Representation [cite: 8]
-st.header("Impact Comparison")
+st.latex(rf"N = \frac{{{human_population:,.0f} \times {meat_consumption_per_capita}}}{{{yield_per_animal}}} = {animals_impacted:,.0f}")
+
+st.header("Visual Representation")
 data = pd.DataFrame({
-    "Scenario": ["Maximum Potential Impact", "Expected Value (Adjusted for Risk)"],
-    "Animals Helped": [impact, ev]
+    "Metric": ["Total Meat Demanded (kg)", "Total Animals Impacted"],
+    "Value": [human_population * meat_consumption_per_capita, animals_impacted]
 })
+st.bar_chart(data.set_index("Metric"))
 
-fig = px.bar(data, x="Scenario", y="Animals Helped", color="Scenario",
-             text_auto='.2s', title="Potential vs. Probable Impact")
-st.plotly_chart(fig)
-
-# ELI5 at the bottom
-st.info("**How to read this chart:** The tall bar shows how many animals we *could* help if everything goes perfectly. The short bar is the 'Expected Value'—it shows the realistic impact when we consider that the project might fail. In Data Analysis, we use the short bar to decide which campaigns are worth the investment[cite: 9].")
+st.info("How to read this chart: The first bar represents the total mass of meat demanded by the human population. The second bar shows the estimated number of individual animals required to meet that demand. This demonstrates how Fermi estimation derives large-scale impact figures from basic population and consumption inputs.")
