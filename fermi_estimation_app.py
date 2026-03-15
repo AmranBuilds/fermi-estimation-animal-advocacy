@@ -1,33 +1,41 @@
 import streamlit as st
-import pandas as pd
 
-st.set_page_config(page_title="Fermi Estimation: Animal Advocacy Impact", layout="wide")
+# The title of your web app
+st.title("Fermi Estimation: Chickens on a Farm")
 
-st.sidebar.header("Estimation Variables")
-human_population = st.sidebar.number_input("Human Population", min_value=100000, max_value=1000000000, value=10000000, step=1000000)
-meat_consumption_per_capita = st.sidebar.slider("Meat Consumption (kg/person/year)", min_value=10, max_value=150, value=50, step=5)
-yield_per_animal = st.sidebar.slider("Yield per Animal (kg)", min_value=1.0, max_value=500.0, value=2.5, step=0.5)
+# 1. Ask the user for the farm size
+st.header("Farm Size")
+barns = st.number_input("How many barns?", min_value=1, value=10)
+barn_width = st.number_input("Barn Width (feet)", min_value=10, value=50)
+barn_length = st.number_input("Barn Length (feet)", min_value=10, value=500)
 
-animals_impacted = (human_population * meat_consumption_per_capita) / yield_per_animal
+# Calculate the footprint of one barn
+barn_area = barn_width * barn_length
 
-st.title("Fermi Estimation: Animal Advocacy Impact")
+# 2. Ask the user for the farm type (Region/Style)
+st.header("Farm Style")
+farm_type = st.selectbox(
+    "How are the birds kept?", 
+    ["Battery Cages (Midwest Standard)", "Cage-Free (West Coast Standard)"]
+)
 
-st.header("The Math")
-st.latex(r"N = \frac{P \times C}{Y}")
-st.markdown(r"""
-* $N$ = Total Animals Impacted
-* $P$ = Human Population
-* $C$ = Meat Consumption per Capita (kg/year)
-* $Y$ = Yield per Animal (kg)
-""")
+# 3. Do the math based on the farm type
+if farm_type == "Battery Cages (Midwest Standard)":
+    # Birds get very little space and cages are stacked like bunk beds
+    space_per_bird = 0.46 
+    tiers = 4 
+    birds_per_barn = (barn_area / space_per_bird) * tiers
+else:
+    # Birds walk on the floor, so they need more space and are not stacked
+    space_per_bird = 1.2 
+    tiers = 1 
+    birds_per_barn = barn_area / space_per_bird
 
-st.latex(rf"N = \frac{{{human_population:,.0f} \times {meat_consumption_per_capita}}}{{{yield_per_animal}}} = {animals_impacted:,.0f}")
+# Calculate the final number
+total_birds = birds_per_barn * barns
 
-st.header("Visual Representation")
-data = pd.DataFrame({
-    "Metric": ["Total Meat Demanded (kg)", "Total Animals Impacted"],
-    "Value": [human_population * meat_consumption_per_capita, animals_impacted]
-})
-st.bar_chart(data.set_index("Metric"))
-
-st.info("How to read this chart: The first bar represents the total mass of meat demanded by the human population. The second bar shows the estimated number of individual animals required to meet that demand. This demonstrates how Fermi estimation derives large-scale impact figures from basic population and consumption inputs.")
+# 4. Show the answer to the user
+st.header("Estimation Results")
+st.write(f"- **Size of one barn:** {barn_area:,.0f} square feet")
+st.write(f"- **Estimated birds in ONE barn:** {birds_per_barn:,.0f}")
+st.write(f"- **Total estimated birds on the farm:** {total_birds:,.0f}")
