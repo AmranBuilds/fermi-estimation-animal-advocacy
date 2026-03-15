@@ -30,3 +30,12 @@ st.latex(r"\text{Total Estimate} = \text{Containers} \times \text{Layers} \times
 
 st.write("Your Filled Equation:")
 st.latex(rf"\text{{Total Birds}} = {barns} \times {tiers} \times \frac{{{barn_width} \times {barn_length}}}{{{space_per_bird}}} = {int(total_birds):,}")
+
+# 4. Step-by-Step Breakdown
+st.header("How This Works")
+st.markdown("""
+* **Step 1: Measure the Building.** We use satellite pictures and shadow lengths to find the exact width and length of one barn.
+* **Step 2: Find the Chicken Space.** We use known industry data to see exactly how much room one chicken is given.
+* **Step 3: Fill the Floor.** We divide the total floor space of the barn by the space one chicken needs. This tells us how many chickens fit on one level.
+* **Step 4: Stack and Multiply.** We multiply that number by the amount of stacked rows (layers) inside the barn, and then multiply by the total number of barns on the farm.
+""")
