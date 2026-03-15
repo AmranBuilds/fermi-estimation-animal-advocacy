@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import altair as alt
-import numpy as np
+import math
 
 st.title("Fermi Estimation: Chickens on a Farm")
 
@@ -27,26 +27,43 @@ barn_area = barn_width * barn_length
 birds_per_barn = (barn_area / space_per_bird) * tiers
 total_birds = birds_per_barn * barns
 
-# 3. Visual: Density in a 10x10 square
+# 3. Visual: Grid in a 10x10 square
 st.header("How squished are the birds?")
-st.write("This box represents a small 10x10 foot space. Each dot is one bird.")
+st.write("This grid shows exactly how many birds fit into a small 10x10 foot floor space.")
 
 sample_area = 100
 sample_birds = int((sample_area / space_per_bird) * tiers)
 
-# Make random dots for the visual
+# Create a perfect grid shape (like a checkerboard)
+cols = math.ceil(math.sqrt(sample_birds))
+
+x_coords = []
+y_coords = []
+
+for i in range(sample_birds):
+    x_coords.append(i % cols) 
+    y_coords.append(i // cols) 
+
 df = pd.DataFrame({
-    'x': np.random.uniform(0, 10, sample_birds),
-    'y': np.random.uniform(0, 10, sample_birds)
+    'x': x_coords,
+    'y': y_coords
 })
 
-# Draw the dots
-chart = alt.Chart(df).mark_circle(size=30, color='orange', opacity=0.7).encode(
-    x=alt.X('x', axis=None, scale=alt.Scale(domain=[0, 10])),
-    y=alt.Y('y', axis=None, scale=alt.Scale(domain=[0, 10]))
+# Draw the grid tiles
+chart = alt.Chart(df).mark_rect(
+    color='orange', 
+    stroke='white', 
+    strokeWidth=1
+).encode(
+    x=alt.X('x:O', axis=None), 
+    y=alt.Y('y:O', axis=None)
 ).properties(
-    height=300
+    title=f"{sample_birds} birds tightly packed in 100 square feet",
+    height=400
+).configure_view(
+    strokeWidth=0
 )
+
 st.altair_chart(chart, use_container_width=True)
 
 # 4. Math Equations
