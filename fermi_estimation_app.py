@@ -35,7 +35,7 @@ st.latex(rf"\text{{Total Birds}} = {barns} \times ({barn_width} \times {barn_len
 # 4. Step-by-Step Breakdown
 st.header("How This Works")
 st.markdown("""
-* **Step 1: Measure the Building.** We use satellite pictures to find the exact floor area of one barn (Width × Length).
-* **Step 2: Apply the Density Factor.** We multiply the floor area by an industry-standard "Density Factor." This factor accounts for all the stacked cages automatically. It tells us how many total birds sit above one square foot of floor space.
-* **Step 3: Multiply by Barns.** We take the total birds in one barn and multiply it by the number of barns on the farm.
+* **Step 1: Measure the Building.** Use satellite pictures to find the exact floor area of one barn (Width × Length).
+* **Step 2: Apply the Density Factor.** Multiply the floor area by an industry-standard "Density Factor." This factor accounts for all the stacked cages automatically. It estimates how many total birds sit above one square foot of floor space.
+* **Step 3: Multiply by Barns.** Take the total birds in one barn and multiply it by the number of barns on the farm.
 """)
